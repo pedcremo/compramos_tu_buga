@@ -1,0 +1,17 @@
+<svg width="180" height="48" viewBox="0 0 180 48" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#145388"/>
+      <stop offset="100%" stop-color="#22c55e"/>
+    </linearGradient>
+  </defs>
+  <rect width="180" height="48" rx="12" fill="#0f172a"/>
+  <path d="M26 13c6 0 10 4 10 9s-4 9-10 9H14l4-6h8c2 0 4-2 4-3s-2-3-4-3h-6l4-6h2z" fill="url(#grad)"/>
+  <circle cx="46" cy="31" r="5" fill="#22c55e"/>
+  <text x="65" y="30" font-family="Inter, Arial, sans-serif" font-size="16" fill="#f8fafc" font-weight="700">
+    Compramos
+  </text>
+  <text x="65" y="42" font-family="Inter, Arial, sans-serif" font-size="14" fill="#38bdf8" font-weight="500">
+    Tu Coche
+  </text>
+</svg>

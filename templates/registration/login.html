@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Inicia sesión | Compramos Tu Coche{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white rounded-xl shadow p-8">
+    <h2 class="text-2xl font-semibold mb-6 text-slate-900">Inicia sesión</h2>
+    <form method="post" class="space-y-4">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+            {% if field.is_hidden %}
+                {{ field }}
+            {% else %}
+                <div>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">{{ field.label }}</label>
+                    {{ field.as_widget(attrs={'class': 'w-full rounded-xl border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary'}) }}
+                    {% if field.errors %}
+                        <p class="text-sm text-red-600 mt-1">{{ field.errors|striptags }}</p>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% endfor %}
+        <button type="submit" class="w-full rounded-xl bg-primary text-white py-3 font-semibold hover:bg-primary/90 transition">Entrar</button>
+    </form>
+    <p class="text-sm text-center mt-6">¿Aún no tienes cuenta? <a class="text-primary font-semibold" href="{% url 'listings:signup' %}">Regístrate</a></p>
+</div>
+{% endblock %}

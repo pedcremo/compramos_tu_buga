@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}Comprar {{ car.brand }} {{ car.model_name }}{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-2xl shadow p-8 space-y-6">
+    <div class="flex flex-col md:flex-row gap-6">
+        <div class="md:w-1/2 space-y-4">
+            <h2 class="text-3xl font-semibold text-slate-900">{{ car.brand }} {{ car.model_name }}</h2>
+            <p class="text-slate-600">Año {{ car.year }} · {{ car.kilometers|intcomma }} km</p>
+            <p class="text-4xl font-bold text-emerald-600">{{ car.price|intcomma }} €</p>
+            <p class="text-sm text-slate-500">Introduce un método de pago válido. Usamos Stripe para procesar la transacción de forma segura.</p>
+        </div>
+        <div class="md:w-1/2">
+            {% if car.photos.all %}
+                <div class="relative overflow-hidden rounded-xl">
+                    <img src="{{ car.cover_photo.image.url }}" class="w-full h-72 object-cover" alt="Foto del coche">
+                </div>
+            {% else %}
+                <div class="w-full h-72 rounded-xl bg-slate-100 grid place-items-center text-slate-400">
+                    Sin fotos
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% if stripe_public_key %}
+        <button id="checkout-button" class="w-full md:w-auto rounded-2xl bg-primary text-white font-semibold px-6 py-3 hover:bg-primary/90 transition">Pagar con tarjeta</button>
+        <p id="checkout-error" class="text-red-600 text-sm hidden"></p>
+    {% else %}
+        <p class="text-red-600 font-semibold">Stripe no está configurado. Contacta con el administrador.</p>
+    {% endif %}
+</div>
+
+{% if stripe_public_key %}
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        const stripe = Stripe("{{ stripe_public_key }}");
+        const getCookie = (name) => {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        };
+        const csrftoken = getCookie('csrftoken');
+        const button = document.getElementById("checkout-button");
+        const errorBox = document.getElementById("checkout-error");
+
+        button.addEventListener("click", () => {
+            button.disabled = true;
+            button.textContent = "Creando pago...";
+            fetch("{% url 'listings:checkout_session' car.pk %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrftoken
+                },
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                return stripe.redirectToCheckout({sessionId: data.sessionId});
+            })
+            .then(result => {
+                if (result.error) {
+                    throw new Error(result.error.message);
+                }
+            })
+            .catch(err => {
+                errorBox.textContent = err.message;
+                errorBox.classList.remove("hidden");
+                button.disabled = false;
+                button.textContent = "Pagar con tarjeta";
+            });
+        });
+    </script>
+{% endif %}
+{% endblock %}
