@@ -92,3 +92,6 @@ Para adjuntar fotos reales desde Internet (Pexels en este ejemplo) ejecuta, con 
 python manage.py fetch_demo_photos
 ```
 Usa `--force` si quieres reemplazar las fotos existentes. Revisa/edita las URLs en `listings/management/commands/fetch_demo_photos.py` para apuntar a tus propias imágenes y asegúrate de respetar las licencias.
+
+# Anem a usar un model de predicció de preu 
+https://github.com/dianisay/Machine-Learning-for-Used-Car-Price-Prediction.git
